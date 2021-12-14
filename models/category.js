@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
-const Schema = new mongoose.Schema;
+const Schema = mongoose.Schema;
 
 const CategorySchema = new Schema({
     name: String,
-    description: String
+    description: String,
 });
 
 CategorySchema.virtual('url').get(function() {
-    return '/catalog/category' + this._id;
+    return '/catalog/category/' + this._id;
 });
 
 module.exports = mongoose.model('Category', CategorySchema);

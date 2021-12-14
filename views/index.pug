@@ -1,0 +1,21 @@
+extends layout 
+
+block content 
+  h1 Welcome to Bounty Hunter's Shop.
+
+  if error 
+    p Error getting content 
+  else
+    p There are several categories in this shop: 
+
+    ul
+      each category in categories 
+        li 
+          a(href=category.url) #[strong #{category.name}]
+    
+    p There are also several items in this shop: 
+
+    ul
+      each item in items 
+        li 
+          a(href=item.url) #[strong #{item.name}]

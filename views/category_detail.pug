@@ -1,0 +1,13 @@
+extends layout 
+
+block content 
+  h1 Items in #{category.name} category: 
+
+  if items != 0
+    ul 
+      each item in items 
+        a(href=item.url) #{item.name}
+        p Price: #{item.price}
+        hr
+  else 
+    p There no items in the category

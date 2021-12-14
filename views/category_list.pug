@@ -1,0 +1,14 @@
+extends layout 
+
+block content 
+
+  if error 
+    p Error getting content 
+  else
+    p There are several categories in this shop: 
+
+    ul
+      each category in categories 
+        li 
+          a(href=category.url) #[strong #{category.name}]
+          p #{category.description}

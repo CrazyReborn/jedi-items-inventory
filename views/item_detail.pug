@@ -1,0 +1,11 @@
+extends layout 
+
+block content
+  h1 #{title}
+
+  p Name: #{item.name}
+  p Description: #{item.description}
+  p Price: #{item.price} Galactic Credits 
+  p Category:
+    a(href=item.category.url) #{item.category.name}
+  p Number in stock: #{item.quantity}
