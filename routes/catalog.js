@@ -19,8 +19,8 @@ router.post('/category/:id/delete', category_controller.category_delete_post);
 router.get('/categories', category_controller.category_list);
 
 
-router.get('/item/:id/create', item_controller.item_create_get);
-router.post('/item/:id/create', item_controller.item_create_post);
+router.get('/item/create', item_controller.item_create_get);
+router.post('/item/create', item_controller.item_create_post);
 
 router.get('/item/:id', item_controller.item_view_get);
 
