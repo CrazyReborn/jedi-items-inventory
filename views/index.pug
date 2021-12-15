@@ -1,19 +1,19 @@
 extends layout 
 
 block content 
-  h1 Welcome to Bounty Hunter's Shop.
+  h1 Welcome to Bounty Hunter's inventory manager.
 
   if error 
     p Error getting content 
   else
-    p There are several categories in this shop: 
+    p There are several categories in your inventory: 
 
     ul
       each category in categories 
         li 
           a(href=category.url) #[strong #{category.name}]
     
-    p There are also several items in this shop: 
+    p There are also several items in the inventory: 
 
     ul
       each item in items 

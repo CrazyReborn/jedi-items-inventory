@@ -23,7 +23,6 @@ exports.item_view_get = function(req, res, next) {
 }
 
 exports.item_create_get = function(req, res, next) {
-    res.send('inplement item create get');
 };
 
 exports.item_create_post = function(req, res, next) {
