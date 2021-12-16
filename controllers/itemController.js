@@ -76,10 +76,26 @@ exports.item_create_post = [
 ];
 
 exports.item_delete_get = function(req, res, next) {
-}
+    Item.findById(req.params.id).exec(function(err, item) {
+        if (err) {
+            return next(err);
+        }
+        res.render('item_delete', {title: 'Delete Item', item: item});
+    });
+};
 
 exports.item_delete_post = function(req, res, next) {
-    res.send('inplement item delete post');
+    Item.findById(req.body.itemid).exec(function(err, item) {
+        if (err) {
+            return next(err);
+        }
+        Item.findByIdAndRemove(req.body.itemid, function deleteItem(err) {
+            if (err) {
+                return next(err);
+            }
+            res.redirect('/catalog/items');
+        })
+    });
 };
 
 exports.item_update_get = function(req, res, next) {
