@@ -31,7 +31,6 @@ exports.item_create_get = function(req, res, next) {
         }
         res.render('item_form', {title: 'Create Item', categories: categories});
     })
-    
 };
 
 exports.item_create_post = [
@@ -77,17 +76,56 @@ exports.item_create_post = [
 ];
 
 exports.item_delete_get = function(req, res, next) {
-    res.send('inplement item delete get');
-};
+}
 
 exports.item_delete_post = function(req, res, next) {
     res.send('inplement item delete post');
 };
 
 exports.item_update_get = function(req, res, next) {
-    res.send('inplement item update get');
+    async.parallel({
+        categories: function(callback) {
+            Category.find().exec(callback);
+        },
+        item: function(callback) {
+            Item.findById(req.params.id).exec(callback);
+        },
+    }, function(err, results) {
+        if (err) {
+            return next(err);
+        }
+        res.render('item_form', {title: 'Update Item', item: results.item, categories: results.categories});
+    });
 };
 
-exports.item_update_post = function(req, res, next) {
-    res.send('inplement item update post');
-};
+exports.item_update_post = [
+    body('name', 'Category name must not be empty.').trim().isLength({min: 1}).escape(),
+    body('description', 'Description must not be empty').trim().isLength({min: 1}).escape(),
+    body('price', 'Price must not be empty.').optional({nullable: true}),
+    body('quantity', 'Quantity must not be empty').optional({nullable: true}),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        let item = new Item({
+            name: req.body.name,
+            description: req.body.description,
+            price: req.body.price,
+            quantity: req.body.quantity,
+            category: req.body.category,
+            _id: req.params.id
+        });
+        if (!errors.isEmpty()) {
+            res.render('item_form', {title: 'Create Item', errors: errors.array(), item: item});
+            return;
+        }
+        else {
+            Item.findByIdAndUpdate(req.params.id, item, {}, function(err, updated_item) {
+                if (err) {
+                    return next(err);
+                }
+                res.redirect(updated_item.url);
+            });
+        }
+    }
+];
