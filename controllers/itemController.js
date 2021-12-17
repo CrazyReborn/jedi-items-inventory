@@ -47,8 +47,10 @@ exports.item_create_post = [
             description: req.body.description,
             price: req.body.price,
             quantity: req.body.quantity,
-            category: req.body.category
+            category: req.body.category,
+            image: 'uploads/' + req.file.filename
         });
+
         if (!errors.isEmpty()) {
             res.render('item_form', {title: 'Create Item', errors: errors.array(), item: item});
             return;

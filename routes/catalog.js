@@ -1,8 +1,24 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function(req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+});
+const upload = multer({
+    storage: storage,
+});
 
 const category_controller = require('../controllers/categoryController');
 const item_controller = require('../controllers/itemController');
+
+
 
 router.get('/', category_controller.index);
 
@@ -20,7 +36,7 @@ router.get('/categories', category_controller.category_list);
 
 
 router.get('/item/create', item_controller.item_create_get);
-router.post('/item/create', item_controller.item_create_post);
+router.post('/item/create', upload.single('image'), item_controller.item_create_post);
 
 router.get('/item/:id', item_controller.item_view_get);
 

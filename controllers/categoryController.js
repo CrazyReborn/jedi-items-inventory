@@ -55,7 +55,7 @@ exports.category_create_post = [
     
             let category = new Category({
                 name: req.body.name,
-                description: req.body.description
+                description: req.body.description,
             });
             if (!errors.isEmpty()) {
                 res.render('category_form', {tite: 'Create Category', category: category, errors: errors.array()});

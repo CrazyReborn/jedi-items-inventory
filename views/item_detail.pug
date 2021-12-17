@@ -9,7 +9,10 @@ block content
   p Category:
     a(href=item.category.url) #{item.category.name}
   p Number in stock: #{item.quantity}
-
+  if item.image==undefined
+    
+  else 
+    img.img-thumbnail(src='../../' + item.image)
   p 
     a(href=item.url + '/update') Update item
   p 
