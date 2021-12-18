@@ -2,6 +2,9 @@ const Item = require('../models/item');
 const Category = require('../models/category');
 const async = require('async');
 const { body, validationResult } = require('express-validator');
+require('dotenv').config();
+const password = process.env.ADMIN_PASSWORD;
+
 
 exports.item_list = function(req, res, next) {
     Item.find().exec(function (err, results) {
@@ -38,7 +41,6 @@ exports.item_create_post = [
     body('description', 'Description must not be empty').trim().isLength({min: 1}).escape(),
     body('price', 'Price must not be empty.').optional({nullable: true}),
     body('quantity', 'Quantity must not be empty').optional({nullable: true}),
-
     (req, res, next) => {
         const errors = validationResult(req);
 
@@ -51,34 +53,42 @@ exports.item_create_post = [
             image: 'uploads/' + req.file.filename
         });
 
-        if (!errors.isEmpty()) {
-            res.render('item_form', {title: 'Create Item', errors: errors.array(), item: item});
-            return;
+        Category.find().exec(function(err, categories) {
+            if (req.body.password !==password) {
+                const err = new Error('Wrong password');
+                err.status = 401;
+                return next(err)
+            }
+            if (!errors.isEmpty()) {
+                res.render('item_form', {title: 'Create Item', errors: errors.array(), categories: categories, item: item});
+                return;
+            }
+            else {
+                Item.findOne({name: req.body.name, category: req.body.category})
+                .exec(function (err, found_item) {
+                    if (err) {
+                        return next(err);
+                    }
+                    if (found_item) {
+                        res.redirect(found_item.url);
+                    }
+                    else {
+                        item.save(function(err) {
+                            if (err) {
+                                return next(err);
+                            }
+                            res.redirect(item.url);
+                        });
+                    }
+                });
+            }
+        })
         }
-        else {
-            Item.findOne({name: req.body.name, category: req.body.category})
-            .exec(function (err, found_item) {
-                if (err) {
-                    return next(err);
-                }
-                if (found_item) {
-                    res.redirect(found_item.url);
-                }
-                else {
-                    item.save(function(err) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.redirect(item.url);
-                    });
-                }
-            });
-        }
-    }
 ];
 
 exports.item_delete_get = function(req, res, next) {
     Item.findById(req.params.id).exec(function(err, item) {
+        
         if (err) {
             return next(err);
         }
@@ -87,7 +97,12 @@ exports.item_delete_get = function(req, res, next) {
 };
 
 exports.item_delete_post = function(req, res, next) {
-    Item.findById(req.body.itemid).exec(function(err, item) {
+    if (req.body.password !==password) {
+        const err = new Error('Wrong password');
+        err.status = 401;
+        return next(err)
+    }
+    Item.findById(req.body.itemid).exec(function(err) {
         if (err) {
             return next(err);
         }
@@ -133,6 +148,11 @@ exports.item_update_post = [
             category: req.body.category,
             _id: req.params.id
         });
+        if (req.body.password !==password) {
+            const err = new Error('Wrong password');
+            err.status = 401;
+            return next(err)
+        }
         if (!errors.isEmpty()) {
             res.render('item_form', {title: 'Create Item', errors: errors.array(), item: item});
             return;

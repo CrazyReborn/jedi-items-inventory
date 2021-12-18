@@ -47,6 +47,7 @@ exports.category_create_get =   function (req, res, next) {
 };
 
 exports.category_create_post = [
+    
         body('name', 'Category name must not be empty.').trim().isLength({min: 1}).escape(),
         body('description', 'Description must not be empty').trim().isLength({min: 1}).escape(),
     
@@ -57,6 +58,11 @@ exports.category_create_post = [
                 name: req.body.name,
                 description: req.body.description,
             });
+            if (req.body.password !==password) {
+                const err = new Error('Wrong password');
+                err.status = 401;
+                return next(err)
+            }
             if (!errors.isEmpty()) {
                 res.render('category_form', {tite: 'Create Category', category: category, errors: errors.array()});
                 return;
@@ -103,6 +109,11 @@ exports.category_delete_get = function(req, res, next) {
 };
 
 exports.category_delete_post = function(req, res, next) {
+    if (req.body.password !==password) {
+        const err = new Error('Wrong password');
+        err.status = 401;
+        return next(err)
+    }
     async.parallel({
         category: function(callback) {
             Category.findById(req.body.categoryid).exec(callback);
@@ -149,6 +160,11 @@ exports.category_update_post = [
             description: req.body.description,
             _id: req.params.id
         });
+        if (req.body.password !==password) {
+            const err = new Error('Wrong password');
+            err.status = 401;
+            return next(err)
+        }
         if (!errors.isEmpty()) {
             res.render('category_form', {tite: 'Create Category', category: category, errors: errors.array()});
             return;
